@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Script for making releases of kdpee
+
+version=`cat VERSION`
+folder="kdpee-$version"
+curdir=`pwd`
+curdir=`basename $curdir`
+
+if [ -d ../$folder -a $curdir != $folder ]; then
+	echo "Folder ../$folder already exists - please remove it before running this"
+	exit;
+fi
+
+if [ -d .svn ]; then
+        svn export --force . ../$folder
+elif [ $curdir != $folder ]; then
+        cp -uR . ../$folder
+fi
+
+tar cvzf ../$folder.tgz ../$folder
+
