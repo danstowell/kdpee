@@ -25,15 +25,20 @@
 // MATLAB ENTRY FUNCTION:
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-    if(nrhs < 4){
-    	mexErrMsgTxt("kdpee error: 4 arguments required by the C implementation.\n");
-    }
-
 	const mxArray *xData, *minData, *maxData;
 	double *xValues, *mins, *maxs;
 	int numdims, numdatums;
 	double zcut;
-	
+
+	int *keys;
+	const double **dimrefs;
+	int i;
+	double result;
+
+	if(nrhs < 4){
+		mexErrMsgTxt("kdpee error: 4 arguments required by the C implementation.\n");
+	}
+
 	// Get info about our input matrix
 	xData = prhs[0];
 	xValues = mxGetPr(xData); // indexed by whichdim * numdims + whichdatum
@@ -53,16 +58,15 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	zcut = mxGetScalar(prhs[3]);
 	
 	// Now we allocate space for the keys that we'll need to shuffle around
-	int *keys = mxMalloc(numdatums * sizeof(int));
+	keys = mxMalloc(numdatums * sizeof(int));
 	// Here we create a set of pointers, one to each row of the input data
-	const double **dimrefs = mxMalloc(numdims * sizeof(double*));
-	int i;
+	dimrefs = mxMalloc(numdims * sizeof(double*));
 	for(i = 0; i < numdims; ++i){
 		dimrefs[i] = xValues + (i * numdatums);
 	}
 	
 	// That's the matlab-specific stuff done, now let's call our calc and return it
-	double result = kdpee(dimrefs, numdatums, numdims, mins, maxs, zcut, keys);
+	result = kdpee(dimrefs, numdatums, numdims, mins, maxs, zcut, keys);
 	plhs[0] = mxCreateDoubleScalar(result);
 	
 	mxFree(keys);

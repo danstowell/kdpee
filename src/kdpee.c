@@ -63,6 +63,8 @@ floatval kdpee_recurse(const floatval **dimrefs, const int n, const int d, float
 									int minindex, int maxindex, int minlev
 									){
 	
+	int i;
+	int newmaxindex, newminindex;
 	int dimno = curlev % d; // The dimension along which we're intending to split
 	int thesize = 1+maxindex-minindex; // No of points in this subset
 	
@@ -88,7 +90,6 @@ floatval kdpee_recurse(const floatval **dimrefs, const int n, const int d, float
 		// so let's calc the negsurprisal!
 		floatval frac = thesize * n_rec;
 		floatval volume = maxs[0] - mins[0];
-		int i;
 		for(i=1; i<d; ++i){
 			volume *= maxs[i] - mins[i];
 		}
@@ -102,7 +103,6 @@ floatval kdpee_recurse(const floatval **dimrefs, const int n, const int d, float
 		// We need to partition and recurse
 		floatval oldextremum;
 		
-		int newmaxindex, newminindex;
 		if((thesize & 1) == 0){ // even # points
 			newmaxindex = minindex + thesize/2 - 1;
 			newminindex = minindex + thesize/2;
@@ -176,9 +176,9 @@ floatval kdpee_hoareFind(const floatval *oneRow, int *keys, int minindex, int ma
 
 void kdpee_hoarePartition(const floatval *oneRow, int *keys, int minindex, int maxindex, 
 											int l0, int r0, floatval fulcrum, int* l, int* r){
+	int tmp;
 	*l = l0;
 	*r = r0;
-	int tmp;
 	while(*l <= *r){
 		// left_scan
 		while(*l <= maxindex && oneRow[keys[*l]] < fulcrum){
