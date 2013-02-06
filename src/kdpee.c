@@ -19,7 +19,16 @@
 
 #include "../kdpee/kdpee.h"
 #include <math.h>
-#include <stdbool.h>
+//#include <stdbool.h>
+typedef int bool;
+
+#ifdef _WIN32
+const double loge_2 =  0.693147181; //natural logarithm of 2
+// Calculates log2 of a number. You need this function in case of using Microsoft (Microsoft does not provide log2...).
+inline double log2( double n ){
+    return log(n) / loge_2; // log(n)/log(2) is log2(n)
+}
+#endif
 
 #ifndef false
 	#define false 0
@@ -47,13 +56,13 @@ floatval kdpee(const floatval **dimrefs, const int n, const int d, floatval *min
 								floatval *maxs, const floatval zcut, int *keys){
 	int minlev = ceil(0.5 * log2(n)); // Min partitioning level
 	int i;
+	floatval result;
+
 	for(i = 0; i < n; ++i){
 		keys[i] = i; // initialise keys
 	}
-
-	floatval result = kdpee_recurse(dimrefs, n, d, mins, maxs, zcut, keys,
+	result = kdpee_recurse(dimrefs, n, d, mins, maxs, zcut, keys,
 						false, 0, 1./n, 0, n-1, minlev);
-
 	return result;
 }
 
@@ -63,19 +72,17 @@ floatval kdpee_recurse(const floatval **dimrefs, const int n, const int d, float
 									int minindex, int maxindex, int minlev
 									){
 	
-	int i;
-	int newmaxindex, newminindex;
 	int dimno = curlev % d; // The dimension along which we're intending to split
 	int thesize = 1+maxindex-minindex; // No of points in this subset
 	
 	// As well as returning the median, this PARTITIONS the data (keys) in-place
 	floatval median = kdpee_hoareMedian(dimrefs[dimno], keys, minindex, maxindex);
-	
+	floatval zscore;
+
 	if(curlev == minlev){
 		mayTerminate = true; // We have passed the lower termination depth
 	}
-	
-	floatval zscore;
+
 	if(mayTerminate){
 		zscore = (sqrt(thesize) * (median+median-mins[dimno]-maxs[dimno]) 
 						/ 
@@ -90,6 +97,7 @@ floatval kdpee_recurse(const floatval **dimrefs, const int n, const int d, float
 		// so let's calc the negsurprisal!
 		floatval frac = thesize * n_rec;
 		floatval volume = maxs[0] - mins[0];
+		int i;
 		for(i=1; i<d; ++i){
 			volume *= maxs[i] - mins[i];
 		}
@@ -102,7 +110,9 @@ floatval kdpee_recurse(const floatval **dimrefs, const int n, const int d, float
 	}else{
 		// We need to partition and recurse
 		floatval oldextremum;
-		
+		floatval left,right;
+
+		int newmaxindex, newminindex;
 		if((thesize & 1) == 0){ // even # points
 			newmaxindex = minindex + thesize/2 - 1;
 			newminindex = minindex + thesize/2;
@@ -114,8 +124,7 @@ floatval kdpee_recurse(const floatval **dimrefs, const int n, const int d, float
 		// Remember the outer extremum, replace with median, then recurse
 		oldextremum = maxs[dimno];
 		maxs[dimno] = median;
-		floatval left = kdpee_recurse(dimrefs, n, d, mins, 
-								maxs, zcut, keys,
+		left = kdpee_recurse(dimrefs, n, d, mins, maxs, zcut, keys,
 								mayTerminate, curlev+1, n_rec,
 								minindex, newmaxindex, minlev
 								);
@@ -125,8 +134,7 @@ floatval kdpee_recurse(const floatval **dimrefs, const int n, const int d, float
 		// Remember the outer extremum, replace with median, then recurse
 		oldextremum = mins[dimno];
 		mins[dimno] = median;
-		floatval right = kdpee_recurse(dimrefs, n, d, mins, 
-								maxs, zcut, keys,
+		right = kdpee_recurse(dimrefs, n, d, mins, maxs, zcut, keys,
 								mayTerminate, curlev+1, n_rec,
 								newminindex, maxindex, minlev
 								);
