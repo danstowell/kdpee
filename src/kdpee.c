@@ -25,7 +25,7 @@ typedef int bool;
 #ifdef _WIN32
 const double loge_2 =  0.693147181; //natural logarithm of 2
 // Calculates log2 of a number. You need this function in case of using Microsoft (Microsoft does not provide log2...).
-inline double log2( double n ){
+double log2( double n ){
     return log(n) / loge_2; // log(n)/log(2) is log2(n)
 }
 #endif
