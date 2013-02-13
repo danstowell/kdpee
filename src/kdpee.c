@@ -22,7 +22,7 @@
 //#include <stdbool.h>
 typedef int bool;
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 const double loge_2 =  0.693147181; //natural logarithm of 2
 // Calculates log2 of a number. You need this function in case of using Microsoft (Microsoft does not provide log2...).
 double log2( double n ){
