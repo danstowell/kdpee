@@ -30,24 +30,24 @@ from distutils.core import setup, Extension
 
 kdpee_mod = Extension('kdpee',
                     define_macros = [('MAJOR_VERSION', '1'),
-                                     ('MINOR_VERSION', '1')],
-                    include_dirs = ['/opt/local/lib/python2.5/site-packages/numpy/core/include'],
-#                    libraries = ['tcl83'],
-#                    library_dirs = ['/usr/local/lib'],
+                                     ('MINOR_VERSION', '2')],
+                    include_dirs = ['/usr/include/numpy'],
                     sources = ['kdpee_py.c', '../src/kdpee.c'])
 
 setup (name = 'kdpee',
-       version = '1.1',
+       version = '1.2',
        description = "Estimate the entropy of a multidimensional data distribution, using 'kdpee' the k-dimensional partitioning estimator",
        author = 'Dan Stowell',
-       author_email = 'dan.stowell@elec.qmul.ac.uk',
-       url = 'http://www.elec.qmul.ac.uk/digitalmusic/downloads/#kdpee',
+       author_email = 'd.stowell@tilburguniversity.edu',
+       url = 'https://github.com/danstowell/kdpee/',
        long_description = '''
 Estimate the entropy of a multidimensional data distribution, using 'kdpee' the k-dimensional partitioning estimator.
 Supply an array where each ROW is a dimension and each COLUMN is a datapoint.
 
   # Analysing a set of 10 2D datapoints:
-  kdpee(array( [[1,2,3,4,5,1,2,3,4,5], [6,7,8,9,0,6,7,8,9,0]]))
+  import numpy as np
+  from kdpee import kdpee
+  kdpee(np.array( [[1,2,3,4,5,1,2,3,4,5], [6,7,8,9,0,6,7,8,9,0]]))
 
 ''',
        ext_modules = [kdpee_mod])

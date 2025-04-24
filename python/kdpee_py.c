@@ -35,14 +35,25 @@ static PyMethodDef mymethods[] = {
 	{NULL, NULL, 0, NULL} /* end marker */
 };
 
+static struct PyModuleDef cModKdpee =
+{
+    PyModuleDef_HEAD_INIT,
+    "kdpee", /* name of module */
+    "",          /* module documentation, may be NULL */
+    0,          /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
+    mymethods
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Methods, including the init method
 
-PyMODINIT_FUNC initkdpee(void){
+PyMODINIT_FUNC PyInit_kdpee(void){
 	// extension must call import_array() in its initialization 
 	// function, after the call to Py_InitModule().
-	(void)Py_InitModule("kdpee", mymethods);
+    PyObject *m = PyModule_Create(&cModKdpee);
 	import_array();
+    return m;
 }
 
 static PyObject * kdpee_pycall(PyObject *self /* <- unused */, PyObject *args) 

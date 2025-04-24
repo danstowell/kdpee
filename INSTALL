@@ -26,11 +26,14 @@ Basic usage in matlab/octave might look something like this:
 
 INSTALLING FOR PYTHON (NUMPY)
 =============================
-Tested on python 2.5 and 2.6, on Mac systems.
+Tested on:
+
+* 2012: python 2.5 and 2.6 on Mac OSX (GCC 4.0, kdpee 1.1)
+* 2025: python 3.8 on Ubuntu Linux (GCC 9.4.0, numpy 1.21.1, kdpee 1.2)
 
 REQUIREMENTS: 
 You'll need to have python as well as the numpy module installed,
-and you'll need a C compiler (e.g. gcc, I used gcc v4.0) too.
+and you'll need a C compiler (e.g. gcc) too.
 
 To install this module, first edit the file "python/setup.py". Find the 
 line which specifies a value for "include_dirs", and edit it to match
@@ -38,18 +41,18 @@ the location of numpy/arrayobject.h on your system.
 
 Then run "setup.py" from a command-line as follows:
 
-  cd ..../path/to/kdpee/python
-  python setup.py build
-  python setup.py install
+    cd ..../path/to/kdpee/python
+    python setup.py build
+    python setup.py install
 
 You might need to be the super-user (e.g. use sudo) for the install step.
 
 
 Basic usage in python might look something like this:
 
-  from numpy import *
-  from kdpee import *
-  # entropy of a 2D distribution with 10 data points:
-  kdpee(array( [[1,2,3,4,5,1,2,3,4,5], [6,7,8,9,0,6,7,8,9,0]]))
-  # (result is 3.072320520444161)
+    import numpy as np
+    from kdpee import kdpee
+    # entropy of a 2D distribution with 10 data points:
+    kdpee(np.array( [[1,2,3,4,5,1,2,3,4,5], [6,7,8,9,0,6,7,8,9,0]]))
+    # (result is 3.072320520444161)
 
